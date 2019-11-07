@@ -450,11 +450,8 @@ jobs:
   cancelTimeoutInMinutes: nonEmptyString  # how much time to give 'run always even if cancelled tasks' before killing them
   variables: { string: string } | [ variable | variableReference ]  
   environment: string  # target environment name and optionally a resource-name to record the deployment history; format: <environment-name>.<resource-name>
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - script: [ script | bash | pwsh | powershell | checkout | task | templateReference ]
+  strategy: [ deployment strategies ]  # see deployment strategy schema
+
 ```
 
 # [Example](#tab/example)
@@ -475,6 +472,79 @@ jobs:
         steps:
         - script: echo my first deployment
 ```
+
+
+### Deployment Strategies
+
+#### RunOnce Deployment Strategy
+
+```YAML
+strategy: 
+    runOnce:
+      pre-deploy:        
+        pool: [ server | pool ] # see pool schema        
+        steps:
+        - script: [ script | bash | pwsh | powershell | checkout | task | templateReference ]
+      deploy:          
+        pool: [ server | pool ] # see pool schema        
+        steps:
+        ...
+      routeTraffic:         
+        pool: [ server | pool ]         
+        steps:
+        ...        
+      postRouteTraffic:          
+        pool: [ server | pool ]        
+        steps:
+        ...
+      on:
+        failure:         
+          pool: [ server | pool ]           
+          steps:
+          ...
+        success:          
+          pool: [ server | pool ]           
+          steps:
+          ...
+```
+
+
+#### Canary deployment strategy:
+
+
+```YAML
+strategy: 
+    canary:
+      increments: [ number ]
+      pre-deploy:        
+        pool: [ server | pool ] # see pool schema        
+        steps:
+        - script: [ script | bash | pwsh | powershell | checkout | task | templateReference ]
+      deploy:          
+        pool: [ server | pool ] # see pool schema        
+        steps:
+        ...
+      routeTraffic:         
+        pool: [ server | pool ]         
+        steps:
+        ...        
+      postRouteTraffic:          
+        pool: [ server | pool ]        
+        steps:
+        ...
+      on:
+        failure:         
+          pool: [ server | pool ]           
+          steps:
+          ...
+        success:          
+          pool: [ server | pool ]           
+          steps:
+          ...
+```
+
+
+
 ::: moniker-end
 
 ---
